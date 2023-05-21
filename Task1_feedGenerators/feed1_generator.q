@@ -10,10 +10,8 @@ startFeed1:{[]
     accountData::(::);
  }
 
-// The makeInstrument function will randomly generate an instrument when called 
-// The function will add the new Instrument values to currBatch but will not send to TP.
-// Variables for Feed 1. More informations about these variables in available in the README.md.
-// BatchID is generated when batch is sent.
+// Generate random instrument data and append to currBatch (but not send to Pricer).
+// More info on variables available in README.md. BatchID is generated when batch is sent.
 makeInstrument:{[]
     RA:4#string[(1 + rand 99)%100],"00";
     R: 4#string[(1 + rand 99)%100],"00"; //First 4 digits from a decimal w/ extra zeors appended (for fixed width).
@@ -26,17 +24,30 @@ makeInstrument:{[]
     instrumentType: string rand `Stock`Bond_; //A _ is placed after bond to keep a fixed legnth.
     uniqueID:"F1_",accountRef,executionTime;
 
-    //formatting generated instument into a fixed width string
-    formattedInstrument: RA,R,NP,P,Y,executionTime,accountRef,marketName,instrumentType,uniqueID;
+    //formatting generated instument into a fixed width string deliminated by "|"
+    formattedInstrument: "|" sv (uniqueID;RA;R;NP;P;Y;executionTime;accountRef;marketName;instrumentType);
 
     //Appending to the currBatch List
     currBatch::currBatch, enlist formattedInstrument;
  }
 
-//timer
-setFeed1Timer:{[]
+/Adds batchID to end of instruments and sends to the instrument pricer (Porst 5000)
+sendBatch:{[]
+    batchId: "|BF1_",string .z.P; // "|" included for delimination
+    currBatch::,[;batchId] each currBatch;
+    `::[(":localhost:5000";5000);"readFeed1(\"",raze currBatch,"\")"];
+    currBatch::();
+    }
+
+//---------timers---------
+MakeF1InstrumentTimer:{[]
     if[null accountData; :(::)];
     
     }
 
-startFeed1() //runs startFeed on start up of q
+SendF1BatchTimer:{[]
+    
+    }
+
+//runs startFeed on start up of q
+startFeed1() 

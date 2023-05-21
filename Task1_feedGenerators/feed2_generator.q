@@ -5,14 +5,12 @@
 
 // The startFeed function runs the initial startup for the feed.
 startFeed2:{[]
-    currBatch::([uniqueID:()] RA:(); R:(); NP:(); P:(); Y:(); executionTime:(); accountRef:(); marketName:(); instrumentType:());
+    currBatch::([]uniqueID:(); RA:(); R:(); NP:(); P:(); Y:(); executionTime:(); accountRef:(); marketName:(); instrumentType:());
     accountData::(::);
  }
 
-// The makeInstrument function will randomly generate an instrument when called 
-// The function will add the new Instrument values to currBatch but will not send to TP.
-// Variables for Feed 2. More informations about these variables in available in the README.md.
-// BatchID is generated when batch is sent.
+// Generate random instrument data and append to currBatch (but not send to Pricer).
+// More info on variables available in README.md. BatchID is generated when batch is sent.
 makeInstrument:{[]
     RA:(1 + rand 99)%100;
     R: (1 + rand 99)%100;
@@ -29,9 +27,21 @@ makeInstrument:{[]
     `currBatch upsert (uniqueID; RA; R; NP; P; Y; executionTime; accountRef; marketName; instrumentType);
  }
 
-//timer
-setFeed2Timer:{[]
+/Adds batchID to end of instruments, makes a json object, and sends to the instrument pricer (Porst 5000)
+sendBatch:{[]
+    update batchId:`$("BF2_",string[.z.P]) from `currBatch;
+    save `$":Data/Feed2/currBatch.json";
+    `::[(":localhost:5000";5000);"readFeed2()"];
+    currBatch::([]uniqueID:(); RA:(); R:(); NP:(); P:(); Y:(); executionTime:(); accountRef:(); marketName:(); instrumentType:());
+    }
+
+//---------timers---------
+MakeF2InstrumentTimer:{[]
     if[null accountData; :(::)];
+    
+    }
+
+SendF2BatchTimer:{[]
     
     }
 
