@@ -3,32 +3,27 @@
 // This feed produces data in csv format
 // Based in the US region. Supported Currency is USD
 
+//Sends accountData (created in Start Feed Function) to feeds 2 & 3.
+pushAccountData:{[]
+        //connecting to Feeds 1 & 2 and sending path to accountsData.csv 
+        `::[(":localhost:4001";5000);"accountData: (string[`SSDSS];enlist \",\") 0: `:Data/Feed3/accountData.csv"];
+        `::[(":localhost:4002";5000);"accountData: (string[`SSDSS];enlist \",\") 0: `:Data/Feed3/accountData.csv"];
+        
+    }
+
 
 // The startFeed function runs the initial startup for the feed.
 // Account mapping is detailed in README.md 
-startFeed:{[]
-    currBatch::([]RA:(); R:(); NP:(); P:(); Y:(); clientName:(); modifiedDate:(); billingCurrency:(); accountRef:(); accountGroup:());
-    accountMapping::([accountRef:`0000000001`0000000002`0000000003`0000000004`0000000005`0000000006] accountGroup:`grX`grY`grZ`grX`grY`grZ)
- }
-
-
-// The makeInstrument function will randomly generate an instrument when called 
-// The function will add the new Instrument values to currBatch but will not send to TP.
-// Variables for Feed 2. More informations about these variables in available in the README.md.
-// BatchID is generated when batch is sent.
-makeInstrument:{[]
-    RA:(1 + rand 99)%100;
-    R: (1 + rand 99)%100;
-    NP: (1000000+rand 999000000); //A random number between 1M and 1B
-    P:1 + rand 365; // A random number between 1 day and 365 days w/ leading zeros for fixed width
-    Y:360;
-    clientName:`$?[3+ rand 5; " "]," ", ?[3+ rand 7; " "];
-    modifiedDate: .z.D;
-    billingCurrency: rand `USD`GBP`EUR;
-    accountRef: rand `0000000001`0000000002`0000000003`0000000004`0000000005`0000000006;
-    accountGroup: first exec accountGroup from accountMapping where accountRef=accountRef;
+startFeed3:{[]
+    accountMapping:([accountRef:`0000000001`0000000002`0000000003`0000000004`0000000005`0000000006] accountGroup:`grX`grY`grZ`grX`grY`grZ);
+    len: count accountMapping; //number of accounts in mapping
+    accountData:: accountMapping,'([] modifiedDate:.z.D; 
+        billingCurrency:len?`GBP`EUR; clientName:len?()); //appending other content. Client name filled later
+    update clientName:(`$?[3+ rand 5; " "]," ",?[3+ rand 7; " "]) by accountRef from `accountData; //Filling in randomized client Name.
     
-    //upserting instrument into a currBatch
-    `currBatch upsert (RA; R; NP; P; Y; clientName; modifiedDate; billingCurrency; accountRef; accountGroup);
+    accountsCSV:: save `:Data/Feed3/accountData.csv; //saving acounts as a CSV file
+
+    pushAccountData();
  }
 
+startFeed3() //runs startFeed on start up of q

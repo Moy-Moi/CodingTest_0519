@@ -1,16 +1,25 @@
 # CodingTest_0519: kdb-dev-programming-test assigned on May 19, 2023
 
+## To use:
+1. Start up  ach feed with the following (assuming q is installed as expected) in this exact order:
+   1. q Task1_feedGenerators/feed1_generator.q -p 4001
+   2. q Task1_feedGenerators/feed2_generator.q -p 4002
+   3. q Task1_feedGenerators/feed3_generator.q -p 4003
+
 ## Current quetions:
 1. market name and instrument type? 
-2. Is the push to TP schedule up to me?
 
 ## Overview of Assumptions Made
------------------------------------------------------------------------------------------------------------------------
-1. The feeds come from q processes. 
-2. Assuming that each feed will be sent from different servers (over different ports), different files were created for randomly generating each feed.The tickerplant in on port 5010. 
-3. Notional prinicpal will between an million and a billion of a curreny.
-4. Becuase Feed 1 deals in EUROs it will run on an ACT/365 (max P=Y=365). While Feed 2 uses the GPB and will run on ACT/360 (max P=365; Y=360).
-5. UniqueId is a combination of the Feed ID (F1 or F2) appened to the UTC date/time the instrument was created (Suggestion: The Unique ID can be expanded to include an integer at the end to account for multiple instruments being created at the same time). Market Name is the name of the primary Stock. Billing currency is randomly selected between USD, GBP, and EUR.
+
+1. The feeds are q processes. 
+2. Assuming that each feed will be sent from different servers (over different ports), different files were created for randomly generating each feed.The tickerplant in on port 5000. Feed 1,2, &3 are on ports 4001,4002, & 4003 respectively.
+3. Every Morning feed 3 will create a new mapping of clientName, billing Currency, and accountGroup for every account ref. This mapping will be sent to feed 2 and 3, which will create instrument data for the day, based on these values. Feeds 1 & 2, will then send instrument data to the Instrument Pricer.   
+3. Assumptions about variables & additional contents:
+   1. Notional prinicpal will between an million and a billion of a curreny.
+   2. Becuase Feed 1 deals in EUROs it will run on an ACT/365 (max P=Y=365). While Feed 2 uses the GPB and will run on ACT/360 (max P=365; Y=360).
+   3. UniqueId is a combination of the Feed ID (F1 or F2), accountRef, and datetime. 
+   4. Market Name is the name of the cities associated Stock Exchange. 
+   5. In feed 3, the client name & billing currency associated with each account ref will change daily. 
 6. Feed 1 will send updates to the TP every hour.  Feed 2 send updates to the TP every 5 mins. Feed 3 sends updates once a day. Feeds do not save any data after sending to TP.
 
 
@@ -19,14 +28,14 @@
 
 
 ## Problem Description
------------------------------------------------------------------------------------------------------------------------
+
 Your team is working for a global business that needs the ability to support a new type of instrument worldwide.
 You have been tasked with creating a new Instrument Pricer in order to support this operation.
 The new Pricer needs to run in its own Q process and will perform a calculation, and would like to
 eventually cross reference this figure in US Dollars (USD).
 
 ## Requirement
------------------------------------------------------------------------------------------------------------------------
+
 The formula to calculate this price takes into account five different variables. They are:
 
 RA = the rate of interest
@@ -58,8 +67,7 @@ Messages will be exchanged by three upstream processes and perform insertions in
    supported currencies: GBP
 
 3. Feed 3- The 3rd system will give you a snapshot of static account data.
-   Data comes in once a day at 06:00 GMT and performs a single batch insert. For simplicity you can assume that this
-   data is published as soon as the process is restarted daily.
+   Data comes in once a day at 06:00 GMT and performs a single batch insert. For simplicity you can assume that this data is published as soon as the process is restarted daily.
    format = This feed produces data in csv format
 
 contents for Feeds 1 & 2: One instrument at a time plus the following joined reference data as a single message:
@@ -90,11 +98,9 @@ grY| 0000000005
 grZ| 0000000006
 
 ## Task
-------------------------------------------------------------------------------------------------------------------------
+-
 1. Create randomised feed generator for Feeds 1,2,3 to publish to a ticker plant.
    Feeds should be generated in the specified format.
-
-
 2. Create the Instrument Pricer that will price each instrument in its native currency for each feed that comes in.
     These results should be saved to an im memory table.
 3. Supply an extension as a separate realtime Q process to provide:
@@ -106,7 +112,7 @@ grZ| 0000000006
    What proposals to the solution would you recommend ?
 
 ## Tips
-------------------------------------------------------------------------------------------------------------------------
+-
 1. Your deliverable needs to be executable.
 2. State any assumptions you make.
 3. Produce three separate deliverables for each task using separate root folders.

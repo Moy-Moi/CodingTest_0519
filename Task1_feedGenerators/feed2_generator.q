@@ -4,10 +4,10 @@
 
 
 // The startFeed function runs the initial startup for the feed.
-startFeed:{[]
+startFeed2:{[]
     currBatch::([uniqueID:()] RA:(); R:(); NP:(); P:(); Y:(); executionTime:(); accountRef:(); marketName:(); instrumentType:());
+    accountData::(::);
  }
-
 
 // The makeInstrument function will randomly generate an instrument when called 
 // The function will add the new Instrument values to currBatch but will not send to TP.
@@ -20,12 +20,19 @@ makeInstrument:{[]
     P:1 + rand 365; // A random number between 1 day and 365 days w/ leading zeros for fixed width
     Y:360;
     executionTime:.z.P;
-    accountRef: rand `0000000001`0000000002`0000000003`0000000004`0000000005`0000000006;
+    accountRef: rand exec accountRef from accountData where billingCurrency=`GBP;
     marketName: `LSE;
     instrumentType: rand `Stock`Bond;
-    uniqueID:`$"F2_",string executionTime;
+    uniqueID:`$"F2_",string[accountRef],string[executionTime];
 
     //upserting instrument into a currBatch
     `currBatch upsert (uniqueID; RA; R; NP; P; Y; executionTime; accountRef; marketName; instrumentType);
  }
 
+//timer
+setFeed2Timer:{[]
+    if[null accountData; :(::)];
+    
+    }
+
+startFeed2() //runs startFeed on start up of q
