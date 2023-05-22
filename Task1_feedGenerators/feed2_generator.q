@@ -63,12 +63,12 @@ sendBatch2:{[]
 //--------------------------Initializing Timers-----------------------------
 MakeF2InstrumentTimer:{[] //Called in feed 3, after the account data is sent
     if[count[accountData]=1; :(::)];
-    .timer.add[`makeInstrument2;enlist(::);`Repeat;"j"$30000000000;.z.P+"j"$3e+10]; //real time, replace after testing: 1.8e+11
+    .timer.add[`makeInstrument2;enlist(::);`Repeat;"j"$1.8e+11;.z.P+"j"$3e+10];
     SendF2BatchTimer[];
     }
 
 SendF2BatchTimer:{[] // Called in MakeF2InstrumentTimer to arm once instruments are bieng made
-    .timer.add[`sendBatch2;enlist(::);`Repeat;"j"$1.2e+11;.z.P+"j"$3e+10]; //real time, replace after testing: 9e+11
+    .timer.add[`sendBatch2;enlist(::);`Repeat;"j"$9e+11;.z.P+"j"$3e+10];  
     }
 
 

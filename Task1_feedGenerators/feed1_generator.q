@@ -64,12 +64,12 @@ sendBatch:{[]
 //--------------------------Initializing Timers-----------------------------
 MakeF1InstrumentTimer:{[] //Called in feed 3, after the account data is sent.
     if[count[accountData]=1; :(::)];
-    .timer.add[`makeInstrument;enlist(::);`Repeat;"j"$30000000000;.z.P+"j"$3e+10]; //real time, replace after testing: 9e+11
+    .timer.add[`makeInstrument;enlist(::);`Repeat;"j"$9e+11;.z.P+"j"$3e+10]; 
     SendF1BatchTimer[];
     }
 
 SendF1BatchTimer:{[] // Called in MakeF1InstrumentTimer to arm once instruments are bieng made
-    .timer.add[`sendBatch;enlist(::);`Repeat;"j"$1.2e+11;.z.P+"j"$3e+10]; //real time, replace after testing: 3.6e+12
+    .timer.add[`sendBatch;enlist(::);`Repeat;"j"$3.6e+12;.z.P+"j"$3e+10]; 
     }
 
 

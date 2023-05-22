@@ -33,11 +33,9 @@ calcPrice:{[currBatchId]
 readFeed1:{[feedData1]
     //Data should be a long string, combining a list of fixed width strings.
     //In each instrument, each variable has an exact number of charachters and is deliminated by a "|".
-    feedData::feedData1;
     numInstruments:"j"$(count[feedData1]%154);
     feedData1: #[numInstruments, 154; feedData1]; //seperates by instrument
     feedData1:{$[(`;"F";"F";"F";"F";"F";"P";`;`;`;`);vs["|";x]]} each feedData1; /seperating by deliminator and changing type
-    feedData::feedData1;
     `instrumentTable upsert feedData1,' numInstruments#(enlist (`;0Nf)); //Appending empty accountData and price to be filled later.
     calcPrice(feedData1[0;10]); //only focusing on current batch to reduce processing time
     }
