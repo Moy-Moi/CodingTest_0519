@@ -1,6 +1,8 @@
 # CodingTest_0519: kdb-dev-programming-test assigned on May 19, 2023
 
 ## To use:
+1. Start up RTS with the following (assuming q is installed as expected):
+   q Task3_RTS/RTS.q -p 5001
 1. Start up the pricer with the following (assuming q is installed as expected)
    q Task2_instrumentPricer/InstrumentPricer.q -p 5000
 2. in 3 different terminals, start up  each feed with the following (assuming q is installed as expected) in this exact order:
@@ -8,22 +10,24 @@
    2. q Task1_feedGenerators/feed2_generator.q -p 4002
    3. q Task1_feedGenerators/feed3_generator.q -p 4003
 
-## Current quetions:
-1. market name and instrument type? 
+3. In the RTS process, the average price by account group is saved as avgPrice and the rolling average is saved as rollingAvgPrice.
+5. There is no automatic shutdown and start up for the current process. It would need to be manually started at AM.
+
 
 ## Overview of Assumptions Made
 
 1. The feeds are q processes. 
-2. Assuming that each feed will be sent from different servers (over different ports), different files were created for randomly generating each feed.The tickerplant in on port 5000. Feed 1,2, &3 are on ports 4001,4002, & 4003 respectively.
+2. Assuming that each feed will be sent from different servers (over different ports), different files were created for randomly generating each feed.The instrument Pricer in on port 5000. Feed 1,2, &3 are on ports 4001,4002, & 4003 respectively. The RTS runs on port 5001.
 3. Every Morning feed 3 will create a new mapping of clientName, billing Currency, and accountGroup for every account ref. This mapping will be sent to feed 2 and 3, which will create instrument data for the day, based on these values. Feeds 1 & 2, will then send instrument data to the Instrument Pricer.   
-3. Assumptions about variables & additional contents:
+4. Assumptions about variables & additional contents:
    1. Notional prinicpal will between an million and a billion of a curreny.
    2. Becuase Feed 1 deals in EUROs it will run on an ACT/365 (max P=Y=365). While Feed 2 uses the GPB and will run on ACT/360 (max P=365; Y=360).
    3. UniqueId is a combination of the Feed ID (F1 or F2), accountRef, and datetime. 
    4. batchId is a combination of "B" (standing for batch), Feed ID (F1 or F2), and the date/time
-   5. Market Name is the name of the cities associated Stock Exchange. 
+   5. marketName is the name of the cities associated Stock Exchange. 
    6. In feed 3, the client name & billing currency associated with each account ref will change daily.  
-6. Feed 1 will send updates to the TP every hour, and create an instrument every 15 mins. Feed 2 sends updates to the TP every 15 mins, and creates an instrument every 3 mins. Feed 3 sends updates once a day. Feeds do not save any data after sending to TP.
+5. Feed 1 will send updates to the TP every hour, and create an instrument every 15 mins. Feed 2 sends updates to the TP every 15 mins, and creates an instrument every 3 mins. Feed 3 sends updates once a day. Feeds do not save any data after sending to TP.
+6. The converion rates to USD are static values defined in exchRate on the RTS process. 
 
 
 ## File Structure

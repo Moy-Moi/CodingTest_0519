@@ -32,8 +32,8 @@ makeInstrument:{[]
     // Generate random instrument data and append to currBatch (but not send to Pricer).
     // More info on variables available in README.md. BatchID is generated when batch is sent.
     
-    RA::4#string[(1 + rand 99)%100],"00";
-    R:: 4#string[(1 + rand 99)%100],"00"; //First 4 digits from a decimal w/ extra zeors appended (for fixed width).
+    RA:4#string[(1 + rand 99)%100],"00";
+    R: 4#string[(1 + rand 99)%100],"00"; //First 4 digits from a decimal w/ extra zeors appended (for fixed width).
     NP: -10#"000",string[1000000+rand 999000000]; //A random number between 1M and 1B  in sci-notation w/ leading zeros for fixed width
     P:1_string (1 + rand 365) + 10 xexp 3; // A random number between 1 day and 365 days w/ leading zeros for fixed width
     Y:"365";
@@ -64,12 +64,12 @@ sendBatch:{[]
 //--------------------------Initializing Timers-----------------------------
 MakeF1InstrumentTimer:{[] //Called in feed 3, after the account data is sent.
     if[count[accountData]=1; :(::)];
-    .timer.add[`makeInstrument;enlist(::);`Repeat;"j"$30000000000;.z.P+"j"$3e+10];
+    .timer.add[`makeInstrument;enlist(::);`Repeat;"j"$30000000000;.z.P+"j"$3e+10]; //real time, replace after testing: 9e+11
     SendF1BatchTimer[];
     }
 
 SendF1BatchTimer:{[] // Called in MakeF1InstrumentTimer to arm once instruments are bieng made
-    .timer.add[`sendBatch;enlist(::);`Repeat;"j"$1.2e+11;.z.P+"j"$3e+10];
+    .timer.add[`sendBatch;enlist(::);`Repeat;"j"$1.2e+11;.z.P+"j"$3e+10]; //real time, replace after testing: 3.6e+12
     }
 
 
