@@ -1,9 +1,9 @@
 # CodingTest_0519: kdb-dev-programming-test assigned on May 19, 2023
 
 ## To use:
-1. Start up the pricer with the following (assuming q is installed as expected):
+1. Start up the pricer with the following (assuming q is installed as expected)
    q Task2_instrumentPricer/InstrumentPricer.q -p 5000
-2. Start up  each feed with the following (assuming q is installed as expected) in this exact order:
+2. in 3 different terminals, start up  each feed with the following (assuming q is installed as expected) in this exact order:
    1. q Task1_feedGenerators/feed1_generator.q -p 4001
    2. q Task1_feedGenerators/feed2_generator.q -p 4002
    3. q Task1_feedGenerators/feed3_generator.q -p 4003
@@ -23,7 +23,7 @@
    4. batchId is a combination of "B" (standing for batch), Feed ID (F1 or F2), and the date/time
    5. Market Name is the name of the cities associated Stock Exchange. 
    6. In feed 3, the client name & billing currency associated with each account ref will change daily.  
-6. Feed 1 will send updates to the TP every hour.  Feed 2 send updates to the TP every 5 mins. Feed 3 sends updates once a day. Feeds do not save any data after sending to TP.
+6. Feed 1 will send updates to the TP every hour, and create an instrument every 15 mins. Feed 2 sends updates to the TP every 15 mins, and creates an instrument every 3 mins. Feed 3 sends updates once a day. Feeds do not save any data after sending to TP.
 
 
 ## File Structure

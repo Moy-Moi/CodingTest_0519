@@ -8,6 +8,9 @@ pushAccountData:{[]
         //connecting to Feeds 1 & 2 and sending path to accountsData.csv 
         `::[(":localhost:4001";5000);"accountData: (string[`SSDSS];enlist \",\") 0: `:Data/Feed3/accountData.csv"];
         `::[(":localhost:4002";5000);"accountData: (string[`SSDSS];enlist \",\") 0: `:Data/Feed3/accountData.csv"];
+        //system "sleep 5"
+        `::[(":localhost:4001";5000);"MakeF1InstrumentTimer[]"];
+        `::[(":localhost:4002";5000);"MakeF2InstrumentTimer[]"];
         
     }
 
@@ -23,7 +26,7 @@ startFeed3:{[]
     
     accountsCSV:: save `:Data/Feed3/accountData.csv; //saving acounts as a CSV file
 
-    pushAccountData();
+    pushAccountData[];
  }
 
-startFeed3() //runs startFeed on start up of q
+startFeed3[]; //runs startFeed on start up of q
